@@ -16,11 +16,13 @@ OS跟網路程式筆記
   - 由於使用機器cpu有限，超過8個thread／process後沒有顯著改善。
   - thread的表現略優於process，猜測是process switch成本更高的原因。
 - [BBS](BBS)
+  > 感謝jason提醒多線程中，`strtok`有共用記憶體的問題，改用`strtok_r`實現
   - [demo pic](img/BBS_1.png)
   - 以OOP的概念實作BBS。
   - 為了在多人交互時，不同時修改同一個記憶體導致資料損毀，使用排他鎖及讀寫鎖維護。
   - server端操作： 
-    - `./server.out <IP> <port> <max user>`
+    - 編譯指令：`g++ *.cpp`
+    - `./a.out <IP> <port> <max user>`
     - IP僅能使用本機上網卡的IP，或以0.0.0.0代表本地IP
     - Port須大於1024（1024前為通用port）
     - max user不為負數

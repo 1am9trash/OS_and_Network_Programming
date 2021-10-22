@@ -63,17 +63,18 @@ void BBS::connect_handler(int client_socket) {
         strcpy(send_buf, "% ");
         send(client_socket, send_buf, strlen(send_buf), 0);
         memset(buf, 0, sizeof(buf));
-        if (recv(client_socket, &buf, sizeof(buf), 0) <= 0)
+        if (recv(client_socket, buf, sizeof(buf), 0) <= 0)
             break;
 
         buf[strlen(buf) - 1] = '\0';
         int cnt = 0;
-        char *p = strtok(buf, " ");
+        char *safe_save_p = NULL;
+        char *p = strtok_r(buf, " ", &safe_save_p);
         while (p != NULL) {
             if (strlen(p) == 0)
                 continue;
             split[cnt++] = p;
-            p = strtok(NULL, " ");
+            p = strtok_r(NULL, " ", &safe_save_p);
         }
 
         if (!strcmp(split[0], "register")) {
@@ -147,7 +148,7 @@ void BBS::connect_handler(int client_socket) {
                 send(client_socket, send_buf, strlen(send_buf), 0);
             } else if (user != NULL) {
                 strcpy(send_buf, split[2]);
-                for (int i = 2; i < cnt; i++) {
+                for (int i = 3; i < cnt; i++) {
                     strcat(send_buf, " ");
                     strcat(send_buf, split[i]);
                 }
