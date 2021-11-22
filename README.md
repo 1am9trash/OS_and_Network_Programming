@@ -10,15 +10,16 @@ OS跟網路程式筆記
 - [chatroom](chatroom)
   - [demo pic](img/chatroom_1.png)
   - 用pthread跟socket實現的多人線上聊天室，但礙於那時對socket了解有限，部分架構不夠優美。
+  - 後續分別在BBS、BBS with single thread上用pthread、select實現了不同用戶對話的server-client model。
 - [matrix production](matrix_production)
   - [demo pic](img/matrix_production_1.png)
   - 分別用multithread跟multiprocess實現平行化的矩陣乘法，目的在於直觀感受平行化的加速。
   - 由於使用機器cpu有限，超過8個thread／process後沒有顯著改善。
   - thread的表現略優於process，猜測是process switch成本更高的原因。
 - [BBS](BBS)
-  > 感謝jason提醒多線程中，`strtok`有共用記憶體的問題，改用`strtok_r`實現
+  > 感謝Jason提醒多線程中，`strtok`有共用記憶體的問題，改用`strtok_r`實現
   - [demo pic](img/BBS_1.png)
-  - 以OOP的概念實作BBS。
+  - 以OOP、multithread、mutex的概念實作BBS。
   - 為了在多人交互時，不同時修改同一個記憶體導致資料損毀，使用排他鎖及讀寫鎖維護。
   - server端操作： 
     - 編譯指令：`g++ *.cpp`
@@ -37,5 +38,19 @@ OS跟網路程式筆記
     - `receive <username>`：列出從用戶收到的所有訊息
     - `logout`：登出
     - `exit`：中斷連線
-
+- [BBS with single thread](BBS_with_single_thread)
+  - [demo pic](img/BBS_with_single_thread_1.png)
+  - 與BBS功能類似，但實做方式不同，使用select在單一thread上handle多個socket(file descipter)的交互，使程式更加scalable，但與此同時，使用論詢的select在效率上較差（可以用epoll改善）。
+  - Makefile
+    - `make`：編譯server、client執行檔
+    - `make clean`：刪除server、client執行檔
+  - server端操作：
+    - `./server <port>`
+  - client端操作：
+    - `./client <IP> <port>`：連線到server
+    - `name <username>`：重新命名user，默認為匿名使用者(anonymous)
+    - `who`：查看在線使用者，以及各使用者的IP、port跟名稱
+    - `tell <username> <message>`：私訊另一名使用者，匿名使用者無權限發送、接收私訊
+    - `yell <message>`：廣播訊息，匿名使用者無權限發送廣播
+    - `exit`：離開server
 
